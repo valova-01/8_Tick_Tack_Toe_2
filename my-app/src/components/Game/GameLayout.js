@@ -2,13 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Information } from '../Information/Information';
 import { Field } from '../Field/Field';
+
 import styles from '../../App.module.css';
 
-const GameLayout = ({ field, handleCellClick, currentPlayer, handleRestart, isGameEnded, isDraw }) => {
+const GameLayout = ({ localState, handleCellClick, handleRestart }) => {
 	return (
 		<div className="game-layout">
-			<Information currentPlayer={currentPlayer} isGameEnded={isGameEnded} isDraw={isDraw} />
-			<Field field={field} onCellClick={handleCellClick} />
+			<Information currentPlayer={localState.currentPlayer} isGameEnded={localState.isGameEnded} isDraw={localState.isDraw} />
+			<Field field={localState.field} onCellClick={handleCellClick} />
 			<div className={styles.restartButton}>
 				<button onClick={handleRestart}>Начать заново</button>
 			</div>
@@ -17,12 +18,8 @@ const GameLayout = ({ field, handleCellClick, currentPlayer, handleRestart, isGa
 };
 
 GameLayout.propTypes = {
-	field: PropTypes.array,
 	handleCellClick: PropTypes.func,
-	currentPlayer: PropTypes.string,
 	handleRestart: PropTypes.func,
-	isGameEnded: PropTypes.bool,
-	isDraw: PropTypes.bool,
 };
 
 export default GameLayout;

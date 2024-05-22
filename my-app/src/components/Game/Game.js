@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-
+import React, { useState, useEffect } from 'react';
+import { setCurrentPlayer, setGameEnded, setDraw, setField } from '../../action';
+import { subscribe, store } from '../../store';
 import GameLayout from './GameLayout';
 
 const WIN_PATTERNS = [
@@ -14,49 +15,53 @@ const WIN_PATTERNS = [
 ];
 
 const Game = () => {
-	const [currentPlayer, setCurrentPlayer] = useState('X');
-	const [isGameEnded, setIsGameEnded] = useState(false);
-	const [isDraw, setIsDraw] = useState(false);
-	const [field, setField] = useState(Array(9).fill(''));
+	const [localState, setLocalState] = useState(store.getState());
+
+	useEffect(() => {
+		const handleStateChange = () => setLocalState(store.getState());
+		subscribe(handleStateChange);
+
+		return () => subscribe(handleStateChange);
+	}, []);
 
 	const handleCellClick = (index) => {
+		const { field, currentPlayer, isGameEnded } = localState;
+
 		if (!field[index] && !isGameEnded) {
 			const newField = [...field];
 			newField[index] = currentPlayer;
-			setField(newField);
+
+			store.dispatch(setField(newField));
 
 			if (checkWinner(newField, currentPlayer)) {
-				setIsGameEnded(true);
+				store.dispatch(setGameEnded(true));
 			} else if (newField.every((cell) => cell !== '')) {
-				setIsDraw(true);
-				setIsGameEnded(true);
+				store.dispatch(setDraw(true));
+				store.dispatch(setGameEnded(true));
 			} else {
-				setCurrentPlayer(currentPlayer === 'X' ? 'O' : 'X');
+				store.dispatch(setCurrentPlayer(currentPlayer === 'X' ? 'O' : 'X'));
 			}
 		}
 	};
-
 	const handleRestart = () => {
-		setCurrentPlayer('X');
-		setIsGameEnded(false);
-		setIsDraw(false);
-		setField(Array(9).fill(''));
+		const resetState = {
+			currentPlayer: 'X',
+			isGameEnded: false,
+			isDraw: false,
+			field: Array(9).fill(''),
+		};
+
+		store.dispatch(setCurrentPlayer(resetState.currentPlayer));
+		store.dispatch(setGameEnded(resetState.isGameEnded));
+		store.dispatch(setDraw(resetState.isDraw));
+		store.dispatch(setField(resetState.field));
 	};
 
 	const checkWinner = (currentField, player) => {
 		return WIN_PATTERNS.some((pattern) => pattern.every((index) => currentField[index] === player));
 	};
 
-	return (
-		<GameLayout
-			field={field}
-			handleCellClick={handleCellClick}
-			isGameEnded={isGameEnded}
-			isDraw={isDraw}
-			handleRestart={handleRestart}
-			currentPlayer={currentPlayer}
-		/>
-	);
+	return <GameLayout localState={localState} handleCellClick={handleCellClick} handleRestart={handleRestart} />;
 };
 
 export default Game;

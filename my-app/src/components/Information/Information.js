@@ -1,16 +1,19 @@
-import React from 'react';
+import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import InformationLayout from './InformationLayout';
 
 export const Information = ({ currentPlayer, isGameEnded, isDraw }) => {
-	let status = '';
-	if (isDraw) {
-		status = 'Ничья';
-	} else if (isGameEnded) {
-		status = `Победа: ${currentPlayer}`;
-	} else {
-		status = `Ходит: ${currentPlayer}`;
-	}
+	const [status, setStatus] = useState('');
+
+	useEffect(() => {
+		if (isDraw) {
+			setStatus('Ничья');
+		} else if (isGameEnded) {
+			setStatus(`Победа: ${currentPlayer}`);
+		} else {
+			setStatus(`Ходит: ${currentPlayer}`);
+		}
+	}, [isDraw, isGameEnded, currentPlayer]);
 
 	return <InformationLayout status={status} />;
 };
