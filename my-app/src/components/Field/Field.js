@@ -1,12 +1,26 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import FieldLayout from './FieldLayout';
+import { store } from '../../store';
+import { setField, setGameEnded, setDraw, setCurrentPlayer } from '../../action';
+import { checkWinner, chekDarw } from '../../utils/utils.js';
 
-export const Field = ({ field, onCellClick }) => {
-	return <FieldLayout field={field} onCellClick={onCellClick} />;
-};
+export const Field = () => {
+	const { field, currentPlayer, isGameEnded } = store.getState();
+	const handleCellClick = (index) => {
+		if (!field[index] && !isGameEnded) {
+			const newField = [...field];
+			newField[index] = currentPlayer;
+			store.dispatch(setField(newField));
+			if (checkWinner(newField, currentPlayer)) {
+				store.dispatch(setGameEnded());
+			} else if (chekDarw(newField)) {
+				store.dispatch(setDraw());
+				store.dispatch(setGameEnded());
+			} else {
+				store.dispatch(setCurrentPlayer());
+			}
+		}
+	};
 
-Field.propTypes = {
-	field: PropTypes.arrayOf(PropTypes.string),
-	onCellClick: PropTypes.func,
+	return <FieldLayout onCellClick={handleCellClick} />;
 };

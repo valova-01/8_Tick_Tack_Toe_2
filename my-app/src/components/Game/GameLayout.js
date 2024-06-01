@@ -5,11 +5,11 @@ import { Field } from '../Field/Field';
 
 import styles from '../../App.module.css';
 
-const GameLayout = ({ localState, handleCellClick, handleRestart }) => {
+const GameLayout = ({ handleRestart }) => {
 	return (
 		<div className="game-layout">
-			<Information currentPlayer={localState.currentPlayer} isGameEnded={localState.isGameEnded} isDraw={localState.isDraw} />
-			<Field field={localState.field} onCellClick={handleCellClick} />
+			<Information />
+			<Field />
 			<div className={styles.restartButton}>
 				<button onClick={handleRestart}>Начать заново</button>
 			</div>

@@ -1,8 +1,10 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import styles from '../../App.module.css';
 
-const FieldLayout = ({ field, onCellClick }) => {
+import styles from '../../App.module.css';
+import { store } from '../../store';
+
+const FieldLayout = ({ onCellClick }) => {
+	const { field } = store.getState();
 	return (
 		<div className="field-layout">
 			<div className={styles['field-wrapper']}>
@@ -16,11 +18,6 @@ const FieldLayout = ({ field, onCellClick }) => {
 			</div>
 		</div>
 	);
-};
-
-FieldLayout.propTypes = {
-	field: PropTypes.arrayOf(PropTypes.string).isRequired,
-	onCellClick: PropTypes.func.isRequired,
 };
 
 export default FieldLayout;

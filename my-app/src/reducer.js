@@ -1,4 +1,4 @@
-import { SET_CURRENT_PLAYER, SET_GAME_ENDED, SET_DRAW, SET_FIELD } from './action';
+import { SET_CURRENT_PLAYER, SET_GAME_ENDED, SET_DRAW, SET_FIELD, RESET } from './action';
 
 const initialState = {
 	currentPlayer: 'X',
@@ -10,13 +10,15 @@ const initialState = {
 export const gameReducer = (state = initialState, action) => {
 	switch (action.type) {
 		case SET_CURRENT_PLAYER:
-			return { ...state, currentPlayer: action.payload };
+			return { ...state, currentPlayer: state.currentPlayer === 'X' ? 'O' : 'X' };
 		case SET_GAME_ENDED:
-			return { ...state, isGameEnded: action.payload };
+			return { ...state, isGameEnded: true };
 		case SET_DRAW:
-			return { ...state, isDraw: action.payload };
+			return { ...state, isDraw: true };
 		case SET_FIELD:
 			return { ...state, field: action.payload };
+		case RESET:
+			return initialState;
 		default:
 			return state;
 	}
